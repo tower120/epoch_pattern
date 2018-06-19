@@ -168,6 +168,7 @@ One probable solution would be having dirty-list for each setter, like:
 Another solution is to have epoch for each mutable field. Epoch is an int value, which increased each time we mutate value. By storing mutation epoch, and update epoch, we can check does update happens in the same epoch.
 ```c++
     int obj_epoch = 0;
+    
     int a_mut_epoch = 0;
     Point a;
     
@@ -182,7 +183,7 @@ Another solution is to have epoch for each mutable field. Epoch is an int value,
     
     void set_b(Point point);
     
-    int ab_update_epoch = 0;
+    int ab_update_epoch = -1;
     void update_ab(){
        if (obj_epoch == ab_update_epoch) return;    // fast check
        if (ab_update_epoch >= a_epoch && ab_update_epoch >= b_epoch) return;
