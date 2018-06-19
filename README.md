@@ -164,6 +164,8 @@ One probable solution would be having dirty-list for each setter, like:
         m_ab = calculate_ab();
     }
 ```
+But in this form - your class must be immovable, non copyable, otherwise you invalidate your dirty-pointers.
+
 
 Another solution is to have epoch for each mutable field. Epoch is an int value, which increased each time we mutate value. By storing mutation epoch, and update epoch, we can check does update happens in the same epoch.
 ```c++
