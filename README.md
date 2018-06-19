@@ -193,32 +193,3 @@ Another solution is to have epoch for each mutable field. Epoch is an int value,
     }
 ```
 As you can see, setter move time. But we have one problem here. Since we compare for greater or equal we are sensitive for int overflow. If we would just check for equal, we would not have that problem.
-
-Lets try to reverse this. We will move epoch forward on update:
-```c++
-    int obj_epoch = 1;
-
-    int a_mut_epoch = 1;
-    Point a;
-    
-    int b_mut_epoch = 1;
-    Point b;
-    
-    void set_a(Point point){
-        a = point;
-        a_mut_epoch = obj_epoch;
-    }
-    
-    void set_b(Point point);
-    
-    int ab_update_epoch = 0;    // must be behind init mut_epoch
-    void update_ab(){
-       if (obj_epoch+1 == ab_update_epoch) return;    // fast check
-       if (ab_update_epoch == a_epoch && ab_update_epoch == b_epoch) return;
-       
-       ab_update_epoch = obj_epoch;
-       obj_epoch++;
-       
-       m_ab = calculate_ab();
-    }
-```
