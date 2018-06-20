@@ -1,6 +1,8 @@
 # epoch_pattern
 More powerfull version of dirty flag. Each mutation incerease epoch counter. Allow to track changes in entagled parts of object.
 
+## Motivavtion
+
 Consider, that we have Triangle, and it can return length of each edge.
 ```c++
 struct Triangle{
@@ -167,7 +169,12 @@ One probable solution would be having dirty-list for each setter, like:
 But in this form - your class must be immovable, non copyable, otherwise you invalidate your dirty-pointers.
 
 
-Another solution is to have epoch for each mutable field. Epoch is an int value, which increased each time we mutate value. By storing mutation epoch, and update epoch, we can check does update happens in the same epoch.
+## Object Epoch
+
+Another solution is to have epoch of object. Each time we change object, we move it's epoch forward. Think of it as about object's time or revision.
+
+So, in each setter (which we care about), we increase object epoch, and save epoch. In this way, we know at which epoch field was mutated. We also save epoch during update. In this way we can know, does changes in filed occur before our update or not.
+
 ```c++
     int obj_epoch = 0;
     
@@ -195,7 +202,9 @@ Another solution is to have epoch for each mutable field. Epoch is an int value,
        m_ab = calculate_ab();
     }
 ```
-As you can see, setter move time. But we have one problem here. Since we compare for greater or equal we are sensitive for int overflow. If we would just check for equal, we would not have that problem.
+As you can see, setter move time. But we have one problem here. Since we compare for greater or equal we are sensitive for int overflow. If we would just check for equal, we would not have that problem. But if you sure, that you work with relatively short-lived object (not running for weeks), this will do the job.
+
+## Per field Epoch
 
 Simple solution would be storing epoch tuple in update_epoch, like:
 ```c++
@@ -221,4 +230,8 @@ Simple solution would be storing epoch tuple in update_epoch, like:
        m_ab = calculate_ab();
     }
 ```
-In this way we can use equal, instead of greater operation. It is enough to call update once per each MAX_INT mutations, and we are fine with int overflow.
+In this way we can use equal, instead of greater operation. It is enough to call update once per each MAX_INT mutations per field, and we are fine with int overflow. But now we waste memory for storing epoch. If you fine with memory overhead (it may be not that big, after all), you can safely use this method.
+
+## Final solution.
+
+To get rid of memory overhead of previos method, and deal with int overflow, we can 
