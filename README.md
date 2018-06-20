@@ -219,7 +219,7 @@ So, in each setter (which we care about), we increase object epoch, and save epo
 ```
 As you can see, setter move time. But we have one problem here. Since we compare for greater or equal we are sensitive for int overflow. If we would just check for equal, we would not have that problem. But if you sure, that you work with relatively short-lived object (not running for weeks), this will do the job.
 
-## Per field Epoch
+## Per field Epoch (Epoch tuple)
 
 Simple solution would be storing epoch tuple in update_epoch, like:
 ```c++
@@ -247,9 +247,9 @@ Simple solution would be storing epoch tuple in update_epoch, like:
 ```
 In this way we can use equal, instead of greater operation. It is enough to call update once per each MAX_INT mutations per field, and we are fine with int overflow. But now we waste memory for storing epoch tuple. If you fine with memory overhead (it may be not that big, after all), you can safely use this method.
 
-## Final solution.
+## Fixing "Object Epoch" overflow...
 
-To get rid of memory overhead of previos method, and deal with int overflow, we can somehow "reset" all stored epoch's. In this way, after overflow, in each update we will be forced to recalculate once and store actual epoch. IOW have callbacks which set all epoch values to 0.
+To get rid of memory overhead of pre-previos method, and deal with int overflow, we can somehow "reset" all stored epoch's. In this way, after overflow, in each update we will be forced to recalculate once and store actual epoch. IOW have callbacks which set all epoch values to 0.
 
 Let's separate Epoch (latest "time point", can be moved forward, one per object), and EpochPoint (contains int value, stored "time point").
 
@@ -344,11 +344,18 @@ public:
     }
 
 ```
+[Proof of concept](http://coliru.stacked-crooked.com/a/9d7a6b815fd693d0)
 
-As you see, quite verbose definition...
+As you see, quite verbose definition... Plus you must use EpochPoint from the same or inherited class.
+
+Since use Object Epoch is kinda risky, and this fix ...
 
 
 ## Epoch advantages
+
+* Setter unintrusivness. Setters are unaware about updates.
+* You may add your "dirty flags" (update epochs) letter even in unrelated classes.
+* Your update logic gathered in one place, not scattered across setters.
 
 With Epoch you can track does value/object changed without touching target class, you don't need even inherit it:
 
@@ -375,4 +382,12 @@ struct Data{
 
 ```
 
-You don't need events, callbacks, nothing. Object state = object time.
+Object state = object time.
+
+
+## Epoch disadvantages
+
+* Memory ussage. Roughly 8 time more then dirty-flag.
+* You need to compare each dependent field's Epoch to check that we are "dirty". This may be close to O(1) if we have and check whole object epoch, as fast fail check.
+
+N.B. It would be intresting to have whole program Epoch.... But performance-wise that would tie you to single-thread only.
