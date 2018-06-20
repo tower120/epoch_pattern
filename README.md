@@ -84,7 +84,7 @@ public:
 };
 ```
 
-Better, much better. But now we update whole object each time. We can do better, let's have dirty flag for each edge!
+Better, much better. But now we update whole object each time. We can do better, let's have dirty flag for each edge (we can't have dirty flags for points, since 2 updates will depends on each flag)!
 ```c++
 class Triangle{
     bool ab_dirty = true;
@@ -120,6 +120,7 @@ public:
 ```
 
 Perfect. Performance-wise. End of story?
+
 And now, we want that our Triangle can tell it's area. And we want it to be cached too, and lazily calculated in the same manner. Well ok, no problem let's add another area_dirty flag, and update all setters with it.
 But at the end of the day, we decided to move to 3D - and make our Triangle a Pyramid!
 ```c++
