@@ -305,10 +305,10 @@ public:
 
     Epoch<Self> epoch;
 
-    EpochPoint<struct A_mut> a_mut_epoch{epoch, &Data::a_mut_epoch};
+    EpochPoint<struct A_mut> a_epoch{epoch, &Self::a_epoch};
     Point a;
     
-    EpochPoint<struct B_mut> b_mut_epoch{epoch, &Data::b_mut_epoch};
+    EpochPoint<struct B_mut> b_epoch{epoch, &Self::b_epoch};
     Point b;
     
     void set_a(Point point){
@@ -318,9 +318,12 @@ public:
     
     void set_b(Point point);
     
-    EpochPoint<struct AB_upd> ab_upd_epoch{epoch, &Data::ab_upd_epoch};
+    EpochPoint<struct AB_upd> ab_upd_epoch{epoch, &Self::ab_upd_epoch};
     void update_ab(){
-       if (!ab_upd_epoch.update(epoch, a_epoch, b_epoch)) return;
+       if (ab_upd_epoch == epoch) return;
+       if (ab_update_epoch >= a_epoch && ab_update_epoch >= b_epoch) return;
+       
+       ab_update_epoch = epoch;
        
        m_ab = calculate_ab();
     }
