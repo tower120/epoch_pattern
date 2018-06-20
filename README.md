@@ -1,5 +1,5 @@
 # epoch_pattern
-More powerfull version of dirty flag. Each mutation incerease epoch counter. Allow to track changes in entagled parts of object.
+More powerful version of dirty flag. Each mutation increase epoch counter. Allow to track changes in entangled parts of object.
 
 ## Motivavtion
 
@@ -217,7 +217,7 @@ So, in each setter (which we care about), we increase object epoch, and save epo
        m_ab = calculate_ab();
     }
 ```
-As you can see, setter move time. But we have one problem here. Since we compare for greater or equal we are sensitive for int overflow. If we would just check for equal, we would not have that problem. But if you sure, that you work with relatively short-lived object (not running for weeks), this will do the job.
+As you can see, setter move time. But we have one problem here. Since we compare for greater or equal we are sensitive for int overflow. If we would just check for equal, we would not have that problem. But if you sure, that you work with relatively short-lived object (not running for hours), this will do the job.
 
 ## Per field Epoch (Epoch tuple)
 
