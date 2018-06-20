@@ -141,7 +141,7 @@ But at the end of the day, we decided to move to 3D - and make our Triangle a Py
         bd_dirty = true;
     }    
 ```
-The more cahced values we have, the bigger becomes our setter's dirty update list.... And you need not mess up with combination too... Which dirty flag depends on which setter group...
+The more cached values we have, the bigger becomes our setter's dirty update list.... And you need not mess up with combination too... Which dirty flag depends on which setter group...
 
 One probable solution would be having dirty-list for each setter, like:
 ```c++
@@ -249,7 +249,7 @@ In this way we can use equal, instead of greater operation. It is enough to call
 
 ## Fixing "Object Epoch" overflow...
 
-To get rid of memory overhead of pre-previos method, and deal with int overflow, we can somehow "reset" all stored epoch's. In this way, after overflow, in each update we will be forced to recalculate once and store actual epoch. IOW have callbacks which set all epoch values to 0.
+To get rid of memory overhead of pre-previous method, and deal with int overflow, we can somehow "reset" all stored epoch's. In this way, after overflow, in each update we will be forced to recalculate once and store actual epoch. IOW have callbacks which set all epoch values to 0.
 
 Let's separate Epoch (latest "time point", can be moved forward, one per object), and EpochPoint (contains int value, stored "time point").
 
@@ -387,7 +387,7 @@ Object state = object time.
 
 ## Epoch disadvantages
 
-* Memory ussage. Roughly 8 time more then dirty-flag.*You may consider to use ushort as epoch type; but beware, with it, you'll need to sync your epochs (call updates) at least each MAX_USHORT mutations.*
+* Memory usage. Roughly 8 time more then dirty-flag.*You may consider to use ushort as epoch type; but beware, with it, you'll need to sync your epochs (call updates) at least each MAX_USHORT mutations.*
 * You need to compare each dependent field's Epoch to check that we are "dirty". This may be close to O(1) if we have and check whole object epoch, as fast fail check.
 
 N.B. It would be intresting to have whole program Epoch.... But performance-wise that would tie you to single-thread only.
