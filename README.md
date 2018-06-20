@@ -348,7 +348,7 @@ public:
 
 As you see, quite verbose definition... Plus you must use EpochPoint from the same or inherited class.
 
-Since use Object Epoch is kinda risky, and this fix ...
+Since use Object Epoch is kinda risky, and with this fix notations is not that terse... We consider that we use Epoch tuples as best possible variant (despite memory usage).
 
 
 ## Epoch advantages
@@ -387,7 +387,7 @@ Object state = object time.
 
 ## Epoch disadvantages
 
-* Memory ussage. Roughly 8 time more then dirty-flag.
+* Memory ussage. Roughly 8 time more then dirty-flag. *You may consider to use ushort as epoch type; but beware, with it, you'll need to sync your epochs (call updates) at least each MAX_USHORT mutations. *
 * You need to compare each dependent field's Epoch to check that we are "dirty". This may be close to O(1) if we have and check whole object epoch, as fast fail check.
 
 N.B. It would be intresting to have whole program Epoch.... But performance-wise that would tie you to single-thread only.
