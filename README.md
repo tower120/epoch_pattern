@@ -153,8 +153,8 @@ One probable solution would be having dirty-list for each setter, like:
     }
     
     bool ab_dirty = true;
-    void update_ab(){    
-        static bool inited = false;
+    bool inited = false;
+    void update_ab(){            
         if (!inited){
             set_a_dirty_list.emplace_back(&ab_dirty);
             inited = true;
