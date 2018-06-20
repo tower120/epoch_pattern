@@ -230,8 +230,101 @@ Simple solution would be storing epoch tuple in update_epoch, like:
        m_ab = calculate_ab();
     }
 ```
-In this way we can use equal, instead of greater operation. It is enough to call update once per each MAX_INT mutations per field, and we are fine with int overflow. But now we waste memory for storing epoch. If you fine with memory overhead (it may be not that big, after all), you can safely use this method.
+In this way we can use equal, instead of greater operation. It is enough to call update once per each MAX_INT mutations per field, and we are fine with int overflow. But now we waste memory for storing epoch tuple. If you fine with memory overhead (it may be not that big, after all), you can safely use this method.
 
 ## Final solution.
 
-To get rid of memory overhead of previos method, and deal with int overflow, we can 
+To get rid of memory overhead of previos method, and deal with int overflow, we can somehow "reset" all stored epoch's. In this way, after overflow, in each update we will be forced to recalculate once and store actual epoch.
+
+Let's separate Epoch (latest "time point", can be moved forward, one per object), and EpochPoint (contains int value, stored "time point").
+
+```c++
+template<class ParentClass>
+class Epoch{
+    using Value = unsigned int;
+    const static Value start_value = 0;
+    Value value = start_value;
+    using EpochRestartCallback = std::function<void(void*)>;
+    static std::vector<EpochRestartCallback> restart_callbacks;
+public:
+    void restart(void* self){
+        for(EpochRestartCallback& callback : restart_callbacks){
+            callback(self);
+        }
+        value = start_value;
+    }
+
+    Epoch& next(void* self){
+        if [[unlikely]] (value == max){
+            restart(self);
+        } else {
+            value++;
+        }
+        return *this;
+    }
+
+    static void on_restart(EpochRestartCallback&& callback){
+        restart_callbacks.emplace_back(std::move(callback));
+    }
+}
+
+template<class Tag, int start_value = 0>
+class EpochPoint{
+    using Self = EpochPoint<Tag, start_value>;
+    int value = start_value;    
+public:
+    template<class EpochParentClass, class Res, class Class>
+    EpochPoint(Epoch<EpochParentClass>& epoch, Res Class::* member_pointer){
+        static_assert(std::is_base_of_v<Self, Res>);
+        static_assert(std::is_base_of_v<EpochParentClass, Class>);
+        
+        // register only once per Epoch + Class Member
+        static bool registered = false;
+        if (!registered){
+            registered = true;
+
+            epoch.on_restart([member_pointer](void* self){
+                // keep old style cast for auto static/dynamic cast
+                EpochPoint& epoch_point = ((Class*)self)->*member_pointer;
+                epoch_point.value = start_value;
+            });
+        }
+    }
+    
+    template<class EpochParentClass>
+    EpochPoint& operator=(const Epoch<EpochParentClass>& epoch){
+       value = epoch.get_value();   
+       return *this;
+    }
+    
+    int get_value() const{
+        return value;
+    }
+};
+
+
+    Epoch<Self> epoch;
+
+    EpochPoint<struct A_mut> a_mut_epoch{epoch, &Data::a_mut_epoch};
+    Point a;
+    
+    EpochPoint<struct B_mut> b_mut_epoch{epoch, &Data::b_mut_epoch};
+    Point b;
+    
+    void set_a(Point point){
+        a = point;
+        a_mut_epoch = epoch.next(this);
+    }
+    
+    void set_b(Point point);
+    
+    EpochPoint<struct AB_upd> ab_upd_epoch{epoch, &Data::ab_upd_epoch};
+    void update_ab(){
+       if (!ab_upd_epoch.update(epoch, a_epoch, b_epoch)) return;
+       
+       m_ab = calculate_ab();
+    }
+
+```
+
+As you see, quite verbose definition...
