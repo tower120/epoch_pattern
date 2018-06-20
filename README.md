@@ -168,6 +168,20 @@ One probable solution would be having dirty-list for each setter, like:
 ```
 But in this form - your class must be immovable, non copyable, otherwise you invalidate your dirty-pointers.
 
+To bypass this, you could store pointers to members:
+```c++
+    std::vector<bool Self::*> set_a_dirty_list;
+    void set_a(Point point){
+        a = point;
+        
+        for(bool Self::* ptr : set_a_dirty_list){
+            (*this).*(ptr) = true;
+        }
+    }
+```
+
+But with this you can't add them from inherited class.
+
 
 ## Object Epoch
 
@@ -331,3 +345,33 @@ public:
 ```
 
 As you see, quite verbose definition...
+
+
+## Epoch advantages
+
+With Epoch you can track does value/object changed without touching target class, you don't need even inherit it:
+
+```c++
+struct A{
+    Epoch epoch;
+    ...
+};
+
+
+struct Data{
+    A a;
+    B b;
+    
+    int sum;
+    tuple<Epoch, Epoch> update_epoch;
+    void update(){
+        if (update_epoch == {a.epoch, b.epoch}) return;
+        update_epoch = {a.epoch, b.epoch};
+                
+        sum = a.value + b.value;
+    }
+};
+
+```
+
+You don't need events, callbacks, nothing. Object state = object time.
