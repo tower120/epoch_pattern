@@ -234,7 +234,7 @@ In this way we can use equal, instead of greater operation. It is enough to call
 
 ## Final solution.
 
-To get rid of memory overhead of previos method, and deal with int overflow, we can somehow "reset" all stored epoch's. In this way, after overflow, in each update we will be forced to recalculate once and store actual epoch.
+To get rid of memory overhead of previos method, and deal with int overflow, we can somehow "reset" all stored epoch's. In this way, after overflow, in each update we will be forced to recalculate once and store actual epoch. IOW have callbacks which set all epoch values to 0.
 
 Let's separate Epoch (latest "time point", can be moved forward, one per object), and EpochPoint (contains int value, stored "time point").
 
