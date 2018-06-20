@@ -354,7 +354,7 @@ Since use Object Epoch is kinda risky, and with this fix notations is not that t
 ## Epoch advantages
 
 * Setter unintrusivness. Setters are unaware about updates.
-* You may add your "dirty flags" (update epochs) letter even in unrelated classes.
+* You may add your "dirty flags" (update epochs) latter even in unrelated classes.
 * Your update logic gathered in one place, not scattered across setters.
 
 With Epoch you can track does value/object changed without touching target class, you don't need even inherit it:
