@@ -308,12 +308,8 @@ public:
     
     template<class EpochParentClass>
     EpochPoint& operator=(const Epoch<EpochParentClass>& epoch){
-       value = epoch.get_value();   
+       value = epoch.value;
        return *this;
-    }
-    
-    int get_value() const{
-        return value;
     }
 };
 
