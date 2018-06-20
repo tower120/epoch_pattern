@@ -196,3 +196,29 @@ Another solution is to have epoch for each mutable field. Epoch is an int value,
     }
 ```
 As you can see, setter move time. But we have one problem here. Since we compare for greater or equal we are sensitive for int overflow. If we would just check for equal, we would not have that problem.
+
+Simple solution would be storing epoch tuple in update_epoch, like:
+```c++
+    int a_mut_epoch = 0;
+    Point a;
+    
+    int b_mut_epoch = 0;
+    Point b;
+    
+    void set_a(Point point){
+        a = point;
+        a_mut_epoch++;
+    }
+    
+    void set_b(Point point);
+    
+    std::tuple<int,int> ab_update_epoch = {-1};
+    void update_ab(){
+       if (ab_update_epoch == {a_epoch, b_epoch}) return;
+       
+       ab_update_epoch = {a_epoch, b_epoch};
+       
+       m_ab = calculate_ab();
+    }
+```
+In this way we can use equal, instead of greater operation. It is enough to call update once per each MAX_INT mutations, and we are fine with int overflow.
