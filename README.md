@@ -6,15 +6,40 @@
 <td valign="top">
 
 <pre lang="cpp">
-Epoch epoch;
+class SettingsWindow{
+    bool save_dirty   = false;
+    bool canvas_dirty = false;
 
-Epoch save_epoch;
-void save(){
-    if (save_epoch == epoch) return;
-    save_epoch = epoch;
+    void rise_dirty_flags(){
+        // O(n)
+        save_dirty   = true;
+        canvas_dirty = true;
+    }
+public:
+    void set_resolution(){
+        rise_dirty_flags();
+    }
+    void set_gamma(){
+        rise_dirty_flags();
+    }
+    void set_anything(){
+        rise_dirty_flags();
+    }
 
-    do_save();
-}
+    void draw(){
+        if (canvas_dirty){
+            canvas_dirty = false;
+            redraw_canvas();
+        }
+    }
+
+    void SaveClk(){
+        if (save_dirty){
+            save_dirty = false;
+            save();
+        }
+    }
+};
 </pre>
 
 </td>
@@ -27,9 +52,6 @@ class SettingsWindow{
     Epoch canvas_update_epoch;
 
 public:
-    // Pay attention to setters. They update only one "flag". With "dirty-flags" you'll need to update 2.
-    // one for redraw, one for save. The more features you'll have the more dirty-flags you need.
-    // With Epochs you need to update only one.
     void set_resolution(){
         epoch++;
     }
