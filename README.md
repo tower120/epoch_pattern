@@ -21,16 +21,6 @@ public:
 Settings settings;
 
 
-class SettingsWindow{
-    Epoch save_epoch;
-public:
-    void SaveClk(){
-        if (save_epoch.update(settings.get_epoch())){
-            save();
-        }
-    }
-}
-
 // each 5 min check for settings changed, if yes - save
 Epoch settings_autosave_epoch;
 if (settings_autosave_epoch.update(settings.get_epoch())){
@@ -40,7 +30,7 @@ if (settings_autosave_epoch.update(settings.get_epoch())){
 
 ---
 
-Pay attention at setters.
+Pay attention on setters.
 
 <table>
 <tr> <th>with dirty-flags</th> <th>with Epochs</th> </tr>
