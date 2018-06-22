@@ -67,9 +67,13 @@ Helper for tuple of Epoch's. Constructed with global function `EpochTupleView ep
 * `bool update(const Epochs&...)` - return `true` if update is needed.
 * `auto guard(const Epochs&...)`  - for early return / fast fail. See below.
 
-without:
 
-```c++
+<table>
+<tr> <th>without</th> <th>with</th> </tr>
+<tr>
+<td valign="top">
+
+<pre lang="cpp">
 Epoch epoch;
 Epoch a_epoch;
 Epoch b_epoch;
@@ -84,11 +88,12 @@ void update_ab(){
 
     do_update();
 }
-```
+</pre>
 
-with:
+</td>
+<td valign="top">
 
-```c++
+<pre lang="cpp">
 Epoch epoch;
 Epoch a_epoch;
 Epoch b_epoch;
@@ -101,7 +106,11 @@ void update_ab(){
 
     do_update();
 }
-```
+</pre>
+
+</td>
+</tr>
+</table>
 
 ---
 
