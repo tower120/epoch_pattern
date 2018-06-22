@@ -10,3 +10,6 @@ set(SOURCE
 )
 
 add_executable(test_epoch_tuple ${SOURCE} test/test_epoch_tuple.cpp)
+add_executable(samples_triangle ${SOURCE} samples/triangle.cpp)
+add_executable(samples_pyramid  ${SOURCE} samples/pyramid.cpp)
+add_executable(samples_settings ${SOURCE} samples/settings.cpp)

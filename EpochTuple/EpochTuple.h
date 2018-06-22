@@ -16,7 +16,10 @@ namespace tower120::utils{
         using Tuple = std::tuple<Args...>;
         Tuple tuple;
 
+        EpochTuple(Tuple&& tuple) : tuple(std::move(tuple)){}
     public:
+        EpochTuple() = default;
+
         template<auto i>
         const auto& get() const{
             return std::get<i>(tuple);
@@ -45,6 +48,10 @@ namespace tower120::utils{
 
         const Tuple& as_tuple() const{
             return tuple;
+        }
+
+        constexpr static EpochTuple<Args...> Pre(){
+            return {{Args::Pre()...}};
         }
     };
 
