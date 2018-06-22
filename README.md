@@ -1,4 +1,46 @@
+```c++
+class Settings{
+    Epoch epoch;
+public:
+    void set_resolution(){
+        epoch++;
+    }
+    void set_gamma(){
+        epoch++;
+    }
+    void set_anything(){
+        epoch++;
+    }
 
+    Epoch get_epoch() const{
+        return epoch;
+    }
+};
+
+
+Settings settings;
+
+
+class SettingsWindow{
+    Epoch save_epoch;
+public:
+    void SaveClk(){
+        if (save_epoch.update(settings.get_epoch())){
+            save();
+        }
+    }
+}
+
+// each 5 min check for settings changed, if yes - save
+Epoch settings_autosave_epoch;
+if (settings_autosave_epoch.update(settings.get_epoch())){
+    save();
+}
+```
+
+
+
+---
 
 <table>
 <tr> <th>with dirty-flags</th> <th>with Epochs</th> </tr>
