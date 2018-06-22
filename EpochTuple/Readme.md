@@ -101,8 +101,8 @@ Epoch b_epoch;
 std::tuple<Epoch, Epoch, Epoch> update_epoch;
 void update_ab(){
     if (!epoch_tuple(update_epoch)
-                .guard(epoch)
-                .update(a_epoch, b_epoch)) return;
+        .guard(epoch)
+        .update(a_epoch, b_epoch)) return;
 
     do_update();
 }
