@@ -112,6 +112,8 @@ void update_ab(){
 </tr>
 </table>
 
+Guard and update accept epochs in the same order as they appear in tuple.
+
 ---
 
 It is recommended to inherit `Epoch`, this way you'll have more type safety, and compiler assisted checks:
