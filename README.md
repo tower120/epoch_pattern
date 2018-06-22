@@ -1,3 +1,5 @@
+See api at [api.md](api.md)
+
 ```c++
 class Settings{
     Epoch epoch;
