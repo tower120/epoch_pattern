@@ -1,6 +1,6 @@
 ## API
 
-#### Epoch
+### Epoch
 
 Wrapper around `unigned int`.
 
@@ -60,7 +60,7 @@ void save(){
 ```
 
 
-#### EpochTupleView
+### EpochTupleView
 
 Helper for tuple of Epoch's. Constructed with global function `EpochTupleView epoch_tuple(std::tuple<Epochs>...)`
 
@@ -128,7 +128,7 @@ void update_ab(){
 }
 ```
 
-#### EpochTuple
+### EpochTuple
 
 `std::tuple<Epochs...>` + `EpochTupleView` :
 
