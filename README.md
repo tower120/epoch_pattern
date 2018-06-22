@@ -18,6 +18,9 @@ void save(){
 </pre>
 
 </td>
+<td valign="top">
+
+<pre lang="cpp">
 class SettingsWindow{
     Epoch epoch;
     Epoch save_epoch;
